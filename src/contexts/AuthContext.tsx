@@ -31,12 +31,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session
-    const savedUser = localStorage.getItem('nexus_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setLoading(false);
+    // Simulate loading and check for saved user
+    setTimeout(() => {
+      const savedUser = localStorage.getItem('nexus_user');
+      if (savedUser) {
+        try {
+          setUser(JSON.parse(savedUser));
+        } catch (error) {
+          console.error('Error parsing saved user:', error);
+          localStorage.removeItem('nexus_user');
+        }
+      }
+      setLoading(false);
+    }, 100);
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
