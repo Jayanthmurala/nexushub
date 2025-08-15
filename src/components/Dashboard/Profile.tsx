@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useData } from '../../contexts/DataContext';
+import BadgeDisplay from './BadgeDisplay';
 
 export default function Profile() {
   const { user, updateProfile } = useAuth();
@@ -172,7 +173,7 @@ export default function Profile() {
           {/* Basic Information */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-6">Basic Information</h2>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
@@ -240,52 +241,27 @@ export default function Profile() {
 
           {/* Skills Section */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Skills & Expertise</h2>
-            
-            {isEditing && (
-              <div className="mb-4">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={newSkill}
-                    onChange={(e) => setNewSkill(e.target.value)}
-                    placeholder="Add a skill..."
-                    className="flex-1 py-2 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
-                  />
-                  <button
-                    onClick={handleAddSkill}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Skills & Expertise</h3>
             <div className="flex flex-wrap gap-2">
-              {formData.skills.length > 0 ? (
-                formData.skills.map((skill, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center px-3 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
-                  >
-                    <span>{skill}</span>
-                    {isEditing && (
-                      <button
-                        onClick={() => handleRemoveSkill(skill)}
-                        className="ml-2 text-blue-600 hover:text-blue-800"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500 italic">No skills added yet.</p>
+              {user?.skills?.map((skill, index) => (
+                <span 
+                  key={index}
+                  className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
+                >
+                  {skill}
+                </span>
+              )) || (
+                <p className="text-gray-500">No skills added yet</p>
               )}
             </div>
           </div>
+
+          {/* Badges Section */}
+          {user?.role === 'student' && (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+              <BadgeDisplay studentId={user.id} showDetails={true} />
+            </div>
+          )}
         </div>
 
         {/* Sidebar */}
@@ -308,7 +284,7 @@ export default function Profile() {
             <h3 className="font-semibold text-gray-900">{user?.name}</h3>
             <p className="text-gray-600 text-sm capitalize">{user?.role?.replace('_', ' ')}</p>
             <p className="text-gray-500 text-sm mt-1">{user?.department}</p>
-            
+
             {isEditing && (
               <button className="mt-4 text-blue-600 hover:text-blue-700 text-sm font-medium">
                 Change Photo
@@ -324,7 +300,7 @@ export default function Profile() {
                 <Mail className="w-4 h-4 mr-3" />
                 <span className="text-sm">{user?.email}</span>
               </div>
-              
+
               {isEditing ? (
                 <>
                   <div className="flex items-center">

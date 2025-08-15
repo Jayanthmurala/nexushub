@@ -1,26 +1,30 @@
 import React, { useState } from 'react';
 import { 
-  MessageSquare, 
-  FolderOpen, 
   Users, 
-  Calendar,
+  MessageSquare, 
+  Calendar, 
   CheckSquare,
+  FolderOpen,
   Plus,
   Send,
   Paperclip,
   MoreVertical,
-  Clock
+  Clock,
+  Award
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useData } from '../../../contexts/DataContext';
+import AwardBadge from './AwardBadge'; // Assuming AwardBadge is in the same directory
 
 export default function CollaborationHub() {
   const { user } = useAuth();
-  const { projects } = useData();
+  const { projects, applications } = useData();
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'chat' | 'tasks' | 'files'>('chat');
   const [newMessage, setNewMessage] = useState('');
   const [newTask, setNewTask] = useState('');
+  const [showAwardBadge, setShowAwardBadge] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<{id: string, name: string} | null>(null);
 
   const activeProjects = projects.filter(p => 
     p.facultyId === user?.id && 
@@ -409,6 +413,13 @@ export default function CollaborationHub() {
           )}
         </div>
       </div>
+
+      {showAwardBadge && selectedStudent && (
+        <AwardBadge 
+          student={selectedStudent} 
+          onClose={() => setShowAwardBadge(false)} 
+        />
+      )}
     </div>
   );
 }

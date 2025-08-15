@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   BookOpen, 
   Users, 
@@ -12,12 +12,14 @@ import {
   Eye,
   ArrowRight
 } from 'lucide-react';
+import AwardBadge from './AwardBadge';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useData } from '../../../contexts/DataContext';
 
 export default function FacultyDashboard() {
   const { user } = useAuth();
   const { projects, applications, events } = useData();
+  const [showAwardBadge, setShowAwardBadge] = useState(false);
 
   const myProjects = projects.filter(p => p.facultyId === user?.id);
   const myApplications = applications.filter(app => 
@@ -156,6 +158,20 @@ export default function FacultyDashboard() {
               </div>
               <ArrowRight className="w-5 h-5 text-orange-600" />
             </button>
+
+            <button 
+              onClick={() => setShowAwardBadge(true)}
+              className="w-full flex items-center justify-between p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors text-left"
+            >
+              <div className="flex items-center">
+                <Award className="w-5 h-5 text-yellow-600 mr-3" />
+                <div>
+                  <div className="font-medium text-gray-900">Award Badge</div>
+                  <div className="text-sm text-gray-500">Recognize student achievements</div>
+                </div>
+              </div>
+              <ArrowRight className="w-5 h-5 text-yellow-600" />
+            </button>
           </div>
         </div>
 
@@ -289,6 +305,13 @@ export default function FacultyDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Award Badge Modal */}
+      {showAwardBadge && (
+        <AwardBadge
+          onClose={() => setShowAwardBadge(false)}
+        />
+      )}
     </div>
   );
 }

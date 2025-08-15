@@ -10,6 +10,7 @@ import {
   ArrowRight,
   Plus
 } from 'lucide-react';
+import BadgeDisplay from '../BadgeDisplay';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useData } from '../../../contexts/DataContext';
 
@@ -190,6 +191,17 @@ export default function StudentDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Badges */}
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Recent Badges</h2>
+            <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+              View All
+            </button>
+          </div>
+          <BadgeDisplay studentId={user?.id || ''} limit={4} />
+        </div>
+
         {/* Recommended Projects */}
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">

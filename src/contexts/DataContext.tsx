@@ -42,14 +42,37 @@ export interface Event {
   registered: number;
 }
 
+// New interfaces for badges
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  category: string;
+  rarity: string;
+  criteria: string;
+}
+
+export interface StudentBadge {
+  id: string;
+  studentId: string;
+  badgeId: string;
+  awardedBy: string;
+  awardedByName: string;
+  awardedAt: Date;
+  reason: string;
+  projectId?: string;
+  eventId?: string;
+}
+
 interface DataContextType {
   projects: Project[];
   applications: Application[];
   events: Event[];
-  addProject: (project: Omit<Project, 'id' | 'createdAt'>) => void;
-  applyToProject: (projectId: string, studentId: string, message?: string) => void;
-  updateApplication: (applicationId: string, status: 'accepted' | 'rejected') => void;
-  addEvent: (event: Omit<Event, 'id'>) => void;
+  badges: Badge[];
+  studentBadges: StudentBadge[];
+  awardBadge: (studentId: string, badgeId: string, reason: string, awardedBy: string, awardedByName: string, projectId?: string, eventId?: string) => void;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -58,6 +81,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
+  const [badges, setBadges] = useState<Badge[]>([]);
+  const [studentBadges, setStudentBadges] = useState<StudentBadge[]>([]);
 
   useEffect(() => {
     // Initialize with demo data
@@ -164,6 +189,15 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     if (savedApplications) {
       setApplications(JSON.parse(savedApplications));
     }
+
+    // Load badges data
+    setBadges(sampleBadges);
+    const savedStudentBadges = localStorage.getItem('nexus_student_badges');
+    if (savedStudentBadges) {
+      setStudentBadges(JSON.parse(savedStudentBadges));
+    } else {
+      setStudentBadges(sampleStudentBadges);
+    }
   }, []);
 
   const addProject = (projectData: Omit<Project, 'id' | 'createdAt'>) => {
@@ -185,7 +219,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       appliedAt: new Date(),
       message
     };
-    
+
     const updatedApplications = [...applications, newApplication];
     setApplications(updatedApplications);
     localStorage.setItem('nexus_applications', JSON.stringify(updatedApplications));
@@ -207,15 +241,31 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     setEvents(prev => [newEvent, ...prev]);
   };
 
+  const awardBadge = (studentId: string, badgeId: string, reason: string, awardedBy: string, awardedByName: string, projectId?: string, eventId?: string) => {
+    const newBadge: StudentBadge = {
+      id: Date.now().toString(),
+      studentId,
+      badgeId,
+      awardedBy,
+      awardedByName,
+      awardedAt: new Date(),
+      reason,
+      projectId,
+      eventId
+    };
+    setStudentBadges(prev => [...prev, newBadge]);
+    // Persist student badges to localStorage
+    localStorage.setItem('nexus_student_badges', JSON.stringify([...studentBadges, newBadge]));
+  };
+
   return (
     <DataContext.Provider value={{
       projects,
       applications,
       events,
-      addProject,
-      applyToProject,
-      updateApplication,
-      addEvent
+      badges,
+      studentBadges,
+      awardBadge
     }}>
       {children}
     </DataContext.Provider>
@@ -229,3 +279,109 @@ export function useData() {
   }
   return context;
 }
+
+// Sample badge data
+const sampleBadges: Badge[] = [
+  {
+    id: '1',
+    name: 'Innovation Pioneer',
+    description: 'Awarded for exceptional innovative thinking and creative problem-solving',
+    icon: '🚀',
+    color: 'bg-purple-500',
+    category: 'innovation',
+    rarity: 'legendary',
+    criteria: 'Create a groundbreaking project or solution'
+  },
+  {
+    id: '2',
+    name: 'Code Master',
+    description: 'Demonstrated exceptional programming skills and code quality',
+    icon: '💻',
+    color: 'bg-blue-500',
+    category: 'skill',
+    rarity: 'epic',
+    criteria: 'Complete a complex programming project with excellent code quality'
+  },
+  {
+    id: '3',
+    name: 'Team Leader',
+    description: 'Excellent leadership skills in team projects',
+    icon: '👑',
+    color: 'bg-yellow-500',
+    category: 'leadership',
+    rarity: 'rare',
+    criteria: 'Successfully lead a team project to completion'
+  },
+  {
+    id: '4',
+    name: 'Research Scholar',
+    description: 'Outstanding contribution to research projects',
+    icon: '🔬',
+    color: 'bg-green-500',
+    category: 'achievement',
+    rarity: 'epic',
+    criteria: 'Publish research or present at conferences'
+  },
+  {
+    id: '5',
+    name: 'Quick Learner',
+    description: 'Rapidly acquired new skills and technologies',
+    icon: '⚡',
+    color: 'bg-orange-500',
+    category: 'skill',
+    rarity: 'common',
+    criteria: 'Learn and apply new technology in a project'
+  },
+  {
+    id: '6',
+    name: 'Event Organizer',
+    description: 'Successfully organized or participated in events',
+    icon: '🎯',
+    color: 'bg-pink-500',
+    category: 'participation',
+    rarity: 'rare',
+    criteria: 'Organize or actively participate in department events'
+  },
+  {
+    id: '7',
+    name: 'Problem Solver',
+    description: 'Exceptional analytical and problem-solving abilities',
+    icon: '🧩',
+    color: 'bg-indigo-500',
+    category: 'skill',
+    rarity: 'rare',
+    criteria: 'Solve complex technical challenges'
+  },
+  {
+    id: '8',
+    name: 'Mentor',
+    description: 'Helped and guided fellow students',
+    icon: '🤝',
+    color: 'bg-teal-500',
+    category: 'leadership',
+    rarity: 'common',
+    criteria: 'Mentor junior students or peers'
+  }
+];
+
+const sampleStudentBadges: StudentBadge[] = [
+  {
+    id: '1',
+    studentId: '1',
+    badgeId: '2',
+    awardedBy: '2',
+    awardedByName: 'Dr. Sarah Wilson',
+    awardedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    reason: 'Excellent work on the blockchain credential system project',
+    projectId: '3'
+  },
+  {
+    id: '2',
+    studentId: '1',
+    badgeId: '5',
+    awardedBy: '2',
+    awardedByName: 'Dr. Sarah Wilson',
+    awardedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+    reason: 'Quickly mastered React and TypeScript for the project'
+  }
+];
