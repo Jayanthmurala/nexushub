@@ -14,6 +14,8 @@ import ApplicationReview from './Faculty/ApplicationReview';
 import CreateProject from './Faculty/CreateProject';
 import CollaborationHub from './Faculty/CollaborationHub';
 import Profile from './Profile';
+// Assuming Feed, CreatePost, and PostCard components are in './Feed'
+import Feed from './Feed'; 
 
 export type ActiveView = 
   | 'dashboard' 
@@ -24,7 +26,8 @@ export type ActiveView =
   | 'review' 
   | 'create-project'
   | 'collaboration'
-  | 'profile';
+  | 'profile'
+  | 'feed'; // Added 'feed' to the type
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -65,6 +68,8 @@ export default function Dashboard() {
         return <CollaborationHub />;
       case 'profile':
         return <Profile />;
+      case 'feed': // Added case for feed
+        return <Feed />;
       default:
         return <div>View not found</div>;
     }
@@ -78,7 +83,7 @@ export default function Dashboard() {
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
       />
-      
+
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-y-auto p-6">
           {renderContent()}

@@ -2,20 +2,19 @@ import React from 'react';
 import { 
   Home, 
   Search, 
+  Calendar, 
   FileText, 
-  Calendar,
-  FolderOpen,
-  Users,
-  Plus,
-  MessageSquare,
-  User,
+  Users, 
+  Settings, 
   LogOut,
-  Menu,
-  X,
-  GraduationCap,
-  Settings,
+  BookOpen,
+  MessageSquare,
+  Plus,
+  Eye,
   BarChart3,
-  Database
+  Shield,
+  User,
+  Rss
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { ActiveView } from './Dashboard';
@@ -39,24 +38,26 @@ export default function Sidebar({ activeView, setActiveView, isSidebarOpen, setI
     switch (user?.role) {
       case 'student':
         return [
-          ...baseItems.slice(0, 1),
+          { id: 'dashboard' as ActiveView, label: 'Dashboard', icon: Home },
+          { id: 'feed', label: 'Feed', icon: Rss },
           { id: 'marketplace' as ActiveView, label: 'Project Marketplace', icon: Search },
           { id: 'applications' as ActiveView, label: 'My Applications', icon: FileText },
           { id: 'events' as ActiveView, label: 'Events', icon: Calendar },
-          ...baseItems.slice(1)
+          { id: 'profile' as ActiveView, label: 'Profile', icon: User }
         ];
-      
+
       case 'faculty':
         return [
-          ...baseItems.slice(0, 1),
+          { id: 'dashboard' as ActiveView, label: 'Dashboard', icon: Home },
+          { id: 'feed', label: 'Feed', icon: Rss },
           { id: 'projects' as ActiveView, label: 'My Projects', icon: FolderOpen },
           { id: 'create-project' as ActiveView, label: 'Create Project', icon: Plus },
           { id: 'review' as ActiveView, label: 'Review Applications', icon: Users },
           { id: 'collaboration' as ActiveView, label: 'Collaboration Hub', icon: MessageSquare },
           { id: 'events' as ActiveView, label: 'Events', icon: Calendar },
-          ...baseItems.slice(1)
+          { id: 'profile' as ActiveView, label: 'Profile', icon: User }
         ];
-      
+
       case 'dept_admin':
         return [
           ...baseItems.slice(0, 1),
@@ -65,7 +66,7 @@ export default function Sidebar({ activeView, setActiveView, isSidebarOpen, setI
           { id: 'events' as ActiveView, label: 'Events', icon: Calendar },
           ...baseItems.slice(1)
         ];
-      
+
       case 'placements_admin':
         return [
           ...baseItems.slice(0, 1),
@@ -73,7 +74,7 @@ export default function Sidebar({ activeView, setActiveView, isSidebarOpen, setI
           { id: 'events' as ActiveView, label: 'Events', icon: Calendar },
           ...baseItems.slice(1)
         ];
-      
+
       case 'head_admin':
         return [
           ...baseItems.slice(0, 1),
@@ -83,7 +84,7 @@ export default function Sidebar({ activeView, setActiveView, isSidebarOpen, setI
           { id: 'applications' as ActiveView, label: 'Admin Management', icon: Settings },
           ...baseItems.slice(1)
         ];
-      
+
       default:
         return baseItems;
     }
