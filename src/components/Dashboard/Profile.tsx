@@ -40,6 +40,9 @@ export default function Profile() {
   const { user, updateProfile } = useAuth();
   const { projects: allProjects, applications } = useData(); // Renamed to avoid conflict with local projects state
   const [isEditing, setIsEditing] = useState(false);
+  
+  // Check if user is admin (any admin role)
+  const isAdmin = user?.role === 'dept_admin' || user?.role === 'placements_admin' || user?.role === 'head_admin';
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -262,28 +265,32 @@ export default function Profile() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
-          <p className="text-gray-600 mt-1">Manage your profile information and showcase your achievements</p>
+          <p className="text-gray-600 mt-1">
+            {isAdmin ? 'View your administrator profile information' : 'Manage your profile information and showcase your achievements'}
+          </p>
         </div>
-        <button
-          onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-          className={`flex items-center px-6 py-3 rounded-lg font-medium transition-colors ${
-            isEditing 
-              ? 'bg-green-600 hover:bg-green-700 text-white'
-              : 'bg-blue-600 hover:bg-blue-700 text-white'
-          }`}
-        >
-          {isEditing ? (
-            <>
-              <Save className="w-5 h-5 mr-2" />
-              Save Changes
-            </>
-          ) : (
-            <>
-              <Edit3 className="w-5 h-5 mr-2" />
-              Edit Profile
-            </>
-          )}
-        </button>
+        {!isAdmin && (
+          <button
+            onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+            className={`flex items-center px-6 py-3 rounded-lg font-medium transition-colors ${
+              isEditing 
+                ? 'bg-green-600 hover:bg-green-700 text-white'
+                : 'bg-blue-600 hover:bg-blue-700 text-white'
+            }`}
+          >
+            {isEditing ? (
+              <>
+                <Save className="w-5 h-5 mr-2" />
+                Save Changes
+              </>
+            ) : (
+              <>
+                <Edit3 className="w-5 h-5 mr-2" />
+                Edit Profile
+              </>
+            )}
+          </button>
+        )}
       </div>
 
       {/* Stats Grid */}
@@ -357,7 +364,7 @@ export default function Profile() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-                {isEditing ? (
+                {!isAdmin && isEditing ? (
                   <textarea
                     name="bio"
                     value={formData.bio}
@@ -369,7 +376,7 @@ export default function Profile() {
                 ) : (
                   <div className="py-3 px-4 bg-gray-50 rounded-lg min-h-[100px]">
                     <span className="text-gray-900">
-                      {user?.bio || 'No bio added yet. Click edit to add your bio.'}
+                      {user?.bio || (isAdmin ? 'Administrator profile' : 'No bio added yet. Click edit to add your bio.')}
                     </span>
                   </div>
                 )}
@@ -377,67 +384,70 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Skills Section */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Skills & Expertise</h3>
-            {isEditing ? (
-              <>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {formData.skills.map((skill, index) => (
+          {/* Skills Section - Hidden for Admins */}
+          {!isAdmin && (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Skills & Expertise</h3>
+              {isEditing ? (
+                <>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {formData.skills.map((skill, index) => (
+                      <span 
+                        key={index}
+                        className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium flex items-center"
+                      >
+                        {skill}
+                        <button onClick={() => handleRemoveSkill(skill)} className="ml-2 text-blue-600 hover:text-blue-800">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="text"
+                      value={newSkill}
+                      onChange={(e) => setNewSkill(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
+                      placeholder="Add a new skill"
+                      className="flex-1 py-2 px-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <button
+                      onClick={handleAddSkill}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {user?.skills?.map((skill, index) => (
                     <span 
                       key={index}
-                      className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium flex items-center"
+                      className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
                     >
                       {skill}
-                      <button onClick={() => handleRemoveSkill(skill)} className="ml-2 text-blue-600 hover:text-blue-800">
-                        <X className="w-3 h-3" />
-                      </button>
                     </span>
-                  ))}
+                  )) || (
+                    <p className="text-gray-500">No skills added yet</p>
+                  )}
                 </div>
-                <div className="flex items-center">
-                  <input
-                    type="text"
-                    value={newSkill}
-                    onChange={(e) => setNewSkill(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
-                    placeholder="Add a new skill"
-                    className="flex-1 py-2 px-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  <button
-                    onClick={handleAddSkill}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-              </>
-            ) : (
-              <div className="flex flex-wrap gap-2">
-                {user?.skills?.map((skill, index) => (
-                  <span 
-                    key={index}
-                    className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
-                  >
-                    {skill}
-                  </span>
-                )) || (
-                  <p className="text-gray-500">No skills added yet</p>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Projects Showcase */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Projects Showcase</h3>
-              {isEditing && (
-                <button onClick={() => setShowAddProject(true)} className="text-blue-600 hover:text-blue-700 flex items-center">
-                  <Plus className="w-4 h-4 mr-1" /> Add Project
-                </button>
               )}
             </div>
+          )}
+
+          {/* Projects Showcase - Hidden for Admins */}
+          {!isAdmin && (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Projects Showcase</h3>
+                {isEditing && (
+                  <button onClick={() => setShowAddProject(true)} className="text-blue-600 hover:text-blue-700 flex items-center">
+                    <Plus className="w-4 h-4 mr-1" /> Add Project
+                  </button>
+                )}
+              </div>
 
             {projects.length === 0 && !showAddProject && (
               <p className="text-gray-500">No projects added yet.</p>
@@ -588,7 +598,8 @@ export default function Profile() {
                 </div>
               </div>
             )}
-          </div>
+            </div>
+          )}
 
           {/* Badges Section */}
           {user?.role === 'student' && (
@@ -619,7 +630,7 @@ export default function Profile() {
             <p className="text-gray-600 text-sm capitalize">{user?.role?.replace('_', ' ')}</p>
             <p className="text-gray-500 text-sm mt-1">{user?.department}</p>
 
-            {isEditing && (
+            {!isAdmin && isEditing && (
               <button className="mt-4 text-blue-600 hover:text-blue-700 text-sm font-medium">
                 Change Photo
               </button>
@@ -635,7 +646,7 @@ export default function Profile() {
                 <span className="text-sm">{user?.email}</span>
               </div>
 
-              {isEditing ? (
+              {!isAdmin && isEditing ? (
                 <>
                   <div className="flex items-center">
                     <Phone className="w-4 h-4 mr-3 text-gray-400" />
@@ -664,75 +675,77 @@ export default function Profile() {
                 <>
                   <div className="flex items-center text-gray-600">
                     <Phone className="w-4 h-4 mr-3" />
-                    <span className="text-sm">{formData.phone || 'Add phone number'}</span>
+                    <span className="text-sm">{formData.phone || (isAdmin ? 'Contact via email' : 'Add phone number')}</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <MapPin className="w-4 h-4 mr-3" />
-                    <span className="text-sm">{formData.location || 'Add location'}</span>
+                    <span className="text-sm">{formData.location || (isAdmin ? 'Administrative Office' : 'Add location')}</span>
                   </div>
                 </>
               )}
             </div>
           </div>
 
-          {/* Social Links */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <h3 className="font-semibold text-gray-900 mb-4">Social Links</h3>
-            <div className="space-y-3">
-              {isEditing ? (
-                <>
-                  <div className="flex items-center">
-                    <Globe className="w-4 h-4 mr-3 text-gray-400" />
-                    <input
-                      type="url"
-                      name="website"
-                      value={formData.website}
-                      onChange={handleInputChange}
-                      placeholder="Website URL"
-                      className="flex-1 text-sm border-0 focus:ring-0 p-0"
-                    />
-                  </div>
-                  <div className="flex items-center">
-                    <Github className="w-4 h-4 mr-3 text-gray-400" />
-                    <input
-                      type="text"
-                      name="github"
-                      value={formData.github}
-                      onChange={handleInputChange}
-                      placeholder="GitHub username"
-                      className="flex-1 text-sm border-0 focus:ring-0 p-0"
-                    />
-                  </div>
-                  <div className="flex items-center">
-                    <Linkedin className="w-4 h-4 mr-3 text-gray-400" />
-                    <input
-                      type="text"
-                      name="linkedin"
-                      value={formData.linkedin}
-                      onChange={handleInputChange}
-                      placeholder="LinkedIn profile"
-                      className="flex-1 text-sm border-0 focus:ring-0 p-0"
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-center text-gray-600">
-                    <Globe className="w-4 h-4 mr-3" />
-                    <span className="text-sm">{formData.website || 'Add website'}</span>
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    <Github className="w-4 h-4 mr-3" />
-                    <span className="text-sm">{formData.github || 'Add GitHub'}</span>
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    <Linkedin className="w-4 h-4 mr-3" />
-                    <span className="text-sm">{formData.linkedin || 'Add LinkedIn'}</span>
-                  </div>
-                </>
-              )}
+          {/* Social Links - Hidden for Admins */}
+          {!isAdmin && (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+              <h3 className="font-semibold text-gray-900 mb-4">Social Links</h3>
+              <div className="space-y-3">
+                {isEditing ? (
+                  <>
+                    <div className="flex items-center">
+                      <Globe className="w-4 h-4 mr-3 text-gray-400" />
+                      <input
+                        type="url"
+                        name="website"
+                        value={formData.website}
+                        onChange={handleInputChange}
+                        placeholder="Website URL"
+                        className="flex-1 text-sm border-0 focus:ring-0 p-0"
+                      />
+                    </div>
+                    <div className="flex items-center">
+                      <Github className="w-4 h-4 mr-3 text-gray-400" />
+                      <input
+                        type="text"
+                        name="github"
+                        value={formData.github}
+                        onChange={handleInputChange}
+                        placeholder="GitHub username"
+                        className="flex-1 text-sm border-0 focus:ring-0 p-0"
+                      />
+                    </div>
+                    <div className="flex items-center">
+                      <Linkedin className="w-4 h-4 mr-3 text-gray-400" />
+                      <input
+                        type="text"
+                        name="linkedin"
+                        value={formData.linkedin}
+                        onChange={handleInputChange}
+                        placeholder="LinkedIn profile"
+                        className="flex-1 text-sm border-0 focus:ring-0 p-0"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center text-gray-600">
+                      <Globe className="w-4 h-4 mr-3" />
+                      <span className="text-sm">{formData.website || 'Add website'}</span>
+                    </div>
+                    <div className="flex items-center text-gray-600">
+                      <Github className="w-4 h-4 mr-3" />
+                      <span className="text-sm">{formData.github || 'Add GitHub'}</span>
+                    </div>
+                    <div className="flex items-center text-gray-600">
+                      <Linkedin className="w-4 h-4 mr-3" />
+                      <span className="text-sm">{formData.linkedin || 'Add LinkedIn'}</span>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Account Settings */}
           <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
@@ -756,7 +769,7 @@ export default function Profile() {
       </div>
 
       {/* Cancel Button for Edit Mode */}
-      {isEditing && (
+      {!isAdmin && isEditing && (
         <div className="fixed bottom-6 right-6 z-10">
           <button
             onClick={handleCancel}
