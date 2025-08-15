@@ -1,5 +1,6 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "nexushub",
+  "description": "NexusHub is a platform that connects developers, designers, and businesses to collaborate on projects, share knowledge, and grow together.",
   "private": true,
   "version": "0.0.0",
   "type": "module",
