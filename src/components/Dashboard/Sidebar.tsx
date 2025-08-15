@@ -18,7 +18,8 @@ import {
   Menu,
   GraduationCap,
   X,
-  FolderOpen
+  FolderOpen,
+  Award
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { ActiveView } from './Dashboard';
@@ -47,6 +48,7 @@ export default function Sidebar({ activeView, setActiveView, isSidebarOpen, setI
           { id: 'marketplace' as ActiveView, label: 'Project Marketplace', icon: Search },
           { id: 'applications' as ActiveView, label: 'My Applications', icon: FileText },
           { id: 'events' as ActiveView, label: 'Events', icon: Calendar },
+          { id: 'badges' as ActiveView, label: 'Badge Center', icon: Award },
           { id: 'profile' as ActiveView, label: 'Profile', icon: User }
         ];
 
@@ -58,6 +60,7 @@ export default function Sidebar({ activeView, setActiveView, isSidebarOpen, setI
           { id: 'create-project' as ActiveView, label: 'Create Project', icon: Plus },
           { id: 'review' as ActiveView, label: 'Review Applications', icon: Users },
           { id: 'collaboration' as ActiveView, label: 'Collaboration Hub', icon: MessageSquare },
+          { id: 'badges' as ActiveView, label: 'Badge Center', icon: Award },
           { id: 'events' as ActiveView, label: 'Events', icon: Calendar },
           { id: 'profile' as ActiveView, label: 'Profile', icon: User }
         ];

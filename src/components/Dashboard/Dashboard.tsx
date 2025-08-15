@@ -16,6 +16,8 @@ import CollaborationHub from './Faculty/CollaborationHub';
 import Profile from './Profile';
 // Assuming Feed, CreatePost, and PostCard components are in './Feed'
 import Feed from './Feed/Feed'; 
+// Assuming BadgeCenter component is in './BadgeCenter'
+import BadgeCenter from './BadgeCenter';
 
 export type ActiveView = 
   | 'dashboard' 
@@ -27,7 +29,8 @@ export type ActiveView =
   | 'create-project'
   | 'collaboration'
   | 'profile'
-  | 'feed'; // Added 'feed' to the type
+  | 'feed'
+  | 'badges'; // Added 'badges' to the type
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -70,6 +73,8 @@ export default function Dashboard() {
         return <Profile />;
       case 'feed': // Added case for feed
         return <Feed />;
+      case 'badges': // Added case for badges
+        return <BadgeCenter />;
       default:
         return <div>View not found</div>;
     }
