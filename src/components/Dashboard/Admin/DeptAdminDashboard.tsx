@@ -1,23 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Users, 
   BookOpen, 
-  TrendingUp, 
+  Calendar, 
+  TrendingUp,
   Award,
-  CheckCircle,
+  Plus,
+  Eye,
+  Edit,
+  MessageSquare,
   Clock,
-  AlertTriangle,
+  CheckCircle,
   ArrowRight,
-  BarChart3,
-  FileCheck,
-  UserCheck
+  Filter,
+  Search
 } from 'lucide-react';
+import CreateEvent from '../Faculty/CreateEvent';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useData } from '../../../contexts/DataContext';
 
 export default function DeptAdminDashboard() {
   const { user } = useAuth();
   const { projects, applications, events } = useData();
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [showCreateEvent, setShowCreateEvent] = useState(false);
 
   const departmentProjects = projects.filter(p => p.department === user?.department);
   const departmentApplications = applications.filter(app => 
@@ -127,7 +133,7 @@ export default function DeptAdminDashboard() {
               </div>
               <ArrowRight className="w-5 h-5 text-blue-600" />
             </button>
-            
+
             <button className="w-full flex items-center justify-between p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors text-left">
               <div className="flex items-center">
                 <UserCheck className="w-5 h-5 text-green-600 mr-3" />
@@ -138,7 +144,7 @@ export default function DeptAdminDashboard() {
               </div>
               <ArrowRight className="w-5 h-5 text-green-600" />
             </button>
-            
+
             <button className="w-full flex items-center justify-between p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors text-left">
               <div className="flex items-center">
                 <BarChart3 className="w-5 h-5 text-purple-600 mr-3" />
@@ -149,7 +155,7 @@ export default function DeptAdminDashboard() {
               </div>
               <ArrowRight className="w-5 h-5 text-purple-600" />
             </button>
-            
+
             <button className="w-full flex items-center justify-between p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors text-left">
               <div className="flex items-center">
                 <Award className="w-5 h-5 text-orange-600 mr-3" />
@@ -160,6 +166,22 @@ export default function DeptAdminDashboard() {
               </div>
               <ArrowRight className="w-5 h-5 text-orange-600" />
             </button>
+
+            {user?.role === 'FACULTY' || user?.role === 'ADMIN' ? (
+              <button
+                onClick={() => setShowCreateEvent(true)}
+                className="w-full flex items-center justify-between p-4 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-colors text-left"
+              >
+                <div className="flex items-center">
+                  <Plus className="w-5 h-5 text-cyan-600 mr-3" />
+                  <div>
+                    <div className="font-medium text-gray-900">Create New Event</div>
+                    <div className="text-sm text-gray-500">Add a new event for students</div>
+                  </div>
+                </div>
+                <ArrowRight className="w-5 h-5 text-cyan-600" />
+              </button>
+            ) : null}
           </div>
         </div>
 
@@ -171,7 +193,7 @@ export default function DeptAdminDashboard() {
               View All
             </button>
           </div>
-          
+
           {pendingApprovals.length > 0 ? (
             <div className="space-y-3">
               {pendingApprovals.map((project) => (
@@ -216,7 +238,7 @@ export default function DeptAdminDashboard() {
               View All
             </button>
           </div>
-          
+
           <div className="space-y-4">
             {recentProjects.map((project) => (
               <div key={project.id} className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
@@ -255,7 +277,7 @@ export default function DeptAdminDashboard() {
               Detailed Report
             </button>
           </div>
-          
+
           <div className="space-y-4">
             <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
               <div className="flex items-center">
@@ -270,7 +292,7 @@ export default function DeptAdminDashboard() {
                 <div className="text-xs text-green-500">+5%</div>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
               <div className="flex items-center">
                 <Users className="w-5 h-5 text-blue-600 mr-3" />
@@ -284,7 +306,7 @@ export default function DeptAdminDashboard() {
                 <div className="text-xs text-blue-500">+12%</div>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
               <div className="flex items-center">
                 <BarChart3 className="w-5 h-5 text-purple-600 mr-3" />
@@ -301,6 +323,9 @@ export default function DeptAdminDashboard() {
           </div>
         </div>
       </div>
+      {showCreateEvent && (
+        <CreateEvent onClose={() => setShowCreateEvent(false)} />
+      )}
     </div>
   );
 }

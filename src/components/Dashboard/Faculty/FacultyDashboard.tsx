@@ -13,6 +13,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import AwardBadge from './AwardBadge';
+import CreateEvent from './CreateEvent';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useData } from '../../../contexts/DataContext';
 
@@ -20,6 +21,7 @@ export default function FacultyDashboard() {
   const { user } = useAuth();
   const { projects, applications, events } = useData();
   const [showAwardBadge, setShowAwardBadge] = useState(false);
+  const [showCreateEvent, setShowCreateEvent] = useState(false);
 
   const myProjects = projects.filter(p => p.facultyId === user?.id);
   const myApplications = applications.filter(app => 
@@ -148,7 +150,10 @@ export default function FacultyDashboard() {
               <ArrowRight className="w-5 h-5 text-purple-600" />
             </button>
             
-            <button className="w-full flex items-center justify-between p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors text-left">
+            <button 
+              onClick={() => setShowCreateEvent(true)}
+              className="w-full flex items-center justify-between p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors text-left"
+            >
               <div className="flex items-center">
                 <Calendar className="w-5 h-5 text-orange-600 mr-3" />
                 <div>
@@ -310,6 +315,17 @@ export default function FacultyDashboard() {
       {showAwardBadge && (
         <AwardBadge
           onClose={() => setShowAwardBadge(false)}
+        />
+      )}
+
+      {/* Create Event Modal */}
+      {showCreateEvent && (
+        <CreateEvent
+          onClose={() => setShowCreateEvent(false)}
+          onSuccess={() => {
+            setShowCreateEvent(false);
+            // Optionally show success message or refresh events
+          }}
         />
       )}
     </div>

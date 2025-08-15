@@ -84,6 +84,7 @@ interface DataContextType {
   awardBadge: (studentId: string, badgeId: string, reason: string, awardedBy: string, awardedByName: string, projectId?: string, eventId?: string) => void;
   registerForEvent: (eventId: string, studentId: string) => void;
   unregisterFromEvent: (eventId: string, studentId: string) => void;
+  addEvent: (eventData: Omit<Event, 'id'>) => void;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -333,7 +334,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       eventRegistrations,
       awardBadge,
       registerForEvent,
-      unregisterFromEvent
+      unregisterFromEvent,
+      addEvent
     }}>
       {children}
     </DataContext.Provider>
