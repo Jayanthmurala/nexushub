@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   X,
@@ -13,7 +12,7 @@ import {
   Type,
   Lightbulb
 } from 'lucide-react';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuth, UserRole } from '../../../contexts/AuthContext';
 
 interface CreatePostProps {
   onClose: () => void;
@@ -60,13 +59,28 @@ export default function CreatePost({ onClose, onSubmit }: CreatePostProps) {
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
 
+  const mapUserRoleToPostRole = (role: UserRole): 'student' | 'faculty' | 'admin' => {
+    switch (role) {
+      case 'student':
+        return 'student';
+      case 'faculty':
+        return 'faculty';
+      case 'dept_admin':
+      case 'placements_admin':
+      case 'head_admin':
+        return 'admin';
+      default:
+        return 'student';
+    }
+  };
+
   const handleSubmit = () => {
     if (!content.trim()) return;
 
     onSubmit({
       authorId: user?.id || '',
       authorName: user?.name || '',
-      authorRole: user?.role || 'student';
+      authorRole: mapUserRoleToPostRole(user?.role || 'student'),
 
       authorDepartment: user?.department || '',
       content: content.trim(),
