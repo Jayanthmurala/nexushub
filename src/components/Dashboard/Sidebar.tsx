@@ -20,7 +20,8 @@ import {
   X,
   FolderOpen,
   Award,
-  Database
+  Database,
+  LayoutDashboard
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { ActiveView } from './Dashboard';
@@ -44,8 +45,8 @@ export default function Sidebar({ activeView, setActiveView, isSidebarOpen, setI
     switch (user?.role) {
       case 'student':
         return [
-          { id: 'dashboard' as ActiveView, label: 'Dashboard', icon: Home },
-          { id: 'feed', label: 'Feed', icon: Rss },
+          { id: 'feed', label: 'Feed', icon: Home },
+          { id: 'dashboard' as ActiveView, label: 'Dashboard', icon: LayoutDashboard },
           { id: 'marketplace' as ActiveView, label: 'Project Marketplace', icon: Search },
           { id: 'applications' as ActiveView, label: 'My Applications', icon: FileText },
           { id: 'events' as ActiveView, label: 'Events', icon: Calendar },
@@ -55,10 +56,10 @@ export default function Sidebar({ activeView, setActiveView, isSidebarOpen, setI
 
       case 'faculty':
         return [
-          { id: 'dashboard' as ActiveView, label: 'Dashboard', icon: Home },
-          { id: 'feed', label: 'Feed', icon: Rss },
+          { id: 'feed', label: 'Feed', icon: Home },
+          { id: 'dashboard' as ActiveView, label: 'Dashboard', icon: LayoutDashboard },
           { id: 'projects' as ActiveView, label: 'My Projects', icon: FolderOpen },
-          { id: 'create-project' as ActiveView, label: 'Create Project', icon: Plus },
+          // { id: 'create-project' as ActiveView, label: 'Create Project', icon: Plus },
           { id: 'review' as ActiveView, label: 'Review Applications', icon: Users },
           { id: 'collaboration' as ActiveView, label: 'Collaboration Hub', icon: MessageSquare },
           { id: 'badges' as ActiveView, label: 'Badge Center', icon: Award },

@@ -66,7 +66,8 @@ export default function CreatePost({ onClose, onSubmit }: CreatePostProps) {
     onSubmit({
       authorId: user?.id || '',
       authorName: user?.name || '',
-      authorRole: user?.role || 'student',
+      authorRole: user?.role || 'student';
+
       authorDepartment: user?.department || '',
       content: content.trim(),
       type: postType,
