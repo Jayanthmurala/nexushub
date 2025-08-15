@@ -66,13 +66,24 @@ export interface StudentBadge {
   eventId?: string;
 }
 
+// Interface for event registrations
+export interface EventRegistration {
+  id: string;
+  eventId: string;
+  studentId: string;
+  registeredAt: Date;
+}
+
 interface DataContextType {
   projects: Project[];
   applications: Application[];
   events: Event[];
   badges: Badge[];
   studentBadges: StudentBadge[];
+  eventRegistrations: EventRegistration[];
   awardBadge: (studentId: string, badgeId: string, reason: string, awardedBy: string, awardedByName: string, projectId?: string, eventId?: string) => void;
+  registerForEvent: (eventId: string, studentId: string) => void;
+  unregisterFromEvent: (eventId: string, studentId: string) => void;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -83,6 +94,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [events, setEvents] = useState<Event[]>([]);
   const [badges, setBadges] = useState<Badge[]>([]);
   const [studentBadges, setStudentBadges] = useState<StudentBadge[]>([]);
+  const [eventRegistrations, setEventRegistrations] = useState<EventRegistration[]>([]);
 
   useEffect(() => {
     // Initialize with demo data
@@ -198,6 +210,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     } else {
       setStudentBadges(sampleStudentBadges);
     }
+
+    // Load event registrations from localStorage
+    const savedEventRegistrations = localStorage.getItem('nexus_event_registrations');
+    if (savedEventRegistrations) {
+      setEventRegistrations(JSON.parse(savedEventRegistrations));
+    }
   }, []);
 
   const addProject = (projectData: Omit<Project, 'id' | 'createdAt'>) => {
@@ -242,7 +260,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   };
 
   const awardBadge = (studentId: string, badgeId: string, reason: string, awardedBy: string, awardedByName: string, projectId?: string, eventId?: string) => {
-    const newBadge: StudentBadge = {
+    const newStudentBadge: StudentBadge = {
       id: Date.now().toString(),
       studentId,
       badgeId,
@@ -253,9 +271,56 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       projectId,
       eventId
     };
-    setStudentBadges(prev => [...prev, newBadge]);
+    setStudentBadges(prev => [...prev, newStudentBadge]);
     // Persist student badges to localStorage
-    localStorage.setItem('nexus_student_badges', JSON.stringify([...studentBadges, newBadge]));
+    localStorage.setItem('nexus_student_badges', JSON.stringify([...studentBadges, newStudentBadge]));
+  };
+
+  const registerForEvent = (eventId: string, studentId: string) => {
+    // Check if already registered
+    if (eventRegistrations.some(reg => reg.eventId === eventId && reg.studentId === studentId)) {
+      console.log("Already registered for this event.");
+      return;
+    }
+
+    // Check capacity
+    const event = events.find(e => e.id === eventId);
+    if (event && event.registered >= event.capacity) {
+      console.log("Event is full.");
+      return;
+    }
+
+    const newRegistration: EventRegistration = {
+      id: Date.now().toString(),
+      eventId,
+      studentId,
+      registeredAt: new Date()
+    };
+    const updatedRegistrations = [...eventRegistrations, newRegistration];
+    setEventRegistrations(updatedRegistrations);
+    localStorage.setItem('nexus_event_registrations', JSON.stringify(updatedRegistrations));
+
+    // Update event registered count
+    setEvents(events.map(event =>
+      event.id === eventId
+        ? { ...event, registered: event.registered + 1 }
+        : event
+    ));
+  };
+
+  const unregisterFromEvent = (eventId: string, studentId: string) => {
+    const updatedRegistrations = eventRegistrations.filter(
+      reg => !(reg.eventId === eventId && reg.studentId === studentId)
+    );
+    setEventRegistrations(updatedRegistrations);
+    localStorage.setItem('nexus_event_registrations', JSON.stringify(updatedRegistrations));
+
+    // Update event registered count
+    setEvents(events.map(event =>
+      event.id === eventId
+        ? { ...event, registered: Math.max(0, event.registered - 1) }
+        : event
+    ));
   };
 
   return (
@@ -265,7 +330,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       events,
       badges,
       studentBadges,
-      awardBadge
+      eventRegistrations,
+      awardBadge,
+      registerForEvent,
+      unregisterFromEvent
     }}>
       {children}
     </DataContext.Provider>
