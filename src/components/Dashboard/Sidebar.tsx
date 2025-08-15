@@ -15,7 +15,10 @@ import {
   Shield,
   User,
   Rss,
-  Menu
+  Menu,
+  GraduationCap,
+  X,
+  FolderOpen
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { ActiveView } from './Dashboard';
