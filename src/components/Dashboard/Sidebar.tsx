@@ -19,7 +19,8 @@ import {
   GraduationCap,
   X,
   FolderOpen,
-  Award
+  Award,
+  Database
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { ActiveView } from './Dashboard';
@@ -77,7 +78,7 @@ export default function Sidebar({ activeView, setActiveView, isSidebarOpen, setI
       case 'placements_admin':
         return [
           ...baseItems.slice(0, 1),
-          { id: 'applications' as ActiveView, label: 'Student Database', icon: Database },
+          { id: 'applications' as ActiveView, label: 'Student Database', icon: Users },
           { id: 'events' as ActiveView, label: 'Events', icon: Calendar },
           ...baseItems.slice(1)
         ];
@@ -85,10 +86,10 @@ export default function Sidebar({ activeView, setActiveView, isSidebarOpen, setI
       case 'head_admin':
         return [
           ...baseItems.slice(0, 1),
-          { id: 'applications' as ActiveView, label: 'Analytics', icon: BarChart3 },
+          { id: 'analytics' as ActiveView, label: 'Analytics', icon: BarChart3 },
           { id: 'projects' as ActiveView, label: 'All Projects', icon: FolderOpen },
           { id: 'events' as ActiveView, label: 'Events', icon: Calendar },
-          { id: 'applications' as ActiveView, label: 'Admin Management', icon: Settings },
+          { id: 'admin-management' as ActiveView, label: 'Admin Management', icon: Settings },
           ...baseItems.slice(1)
         ];
 

@@ -30,7 +30,9 @@ export type ActiveView =
   | 'collaboration'
   | 'profile'
   | 'feed'
-  | 'badges'; // Added 'badges' to the type
+  | 'badges'
+  | 'analytics'
+  | 'admin-management';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -75,6 +77,10 @@ export default function Dashboard() {
         return <Feed />;
       case 'badges': // Added case for badges
         return <BadgeCenter />;
+      case 'analytics':
+        return <HeadAdminDashboard />;
+      case 'admin-management':
+        return <div className="p-6"><h1 className="text-2xl font-bold">Admin Management</h1><p className="text-gray-600 mt-2">Manage system administrators and permissions.</p></div>;
       default:
         return <div>View not found</div>;
     }
