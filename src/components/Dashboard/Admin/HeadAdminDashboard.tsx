@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   BarChart3, 
   Users, 
@@ -12,14 +12,17 @@ import {
   Settings,
   Shield,
   Globe,
-  Calendar
+  Calendar,
+  ArrowRight
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useData } from '../../../contexts/DataContext';
+import CreateEvent from './CreateEvent'; // Assuming CreateEvent component is in the same directory
 
 export default function HeadAdminDashboard() {
   const { user } = useAuth();
   const { projects, applications, events } = useData();
+  const [showCreateEvent, setShowCreateEvent] = useState(false);
 
   const stats = [
     {
@@ -243,7 +246,7 @@ export default function HeadAdminDashboard() {
                     <span className="text-sm font-medium text-gray-700">{dept.engagement}% engagement</span>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-3 gap-4 text-sm">
                   <div>
                     <div className="text-gray-500">Projects</div>
@@ -304,70 +307,117 @@ export default function HeadAdminDashboard() {
         </div>
       </div>
 
-      {/* Recent Activity & Quick Stats */}
+      {/* Quick Actions and Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Quick Actions */}
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+          <div className="space-y-3">
+            <button className="w-full flex items-center justify-between p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors text-left">
+              <div className="flex items-center">
+                <Settings className="w-5 h-5 text-blue-600 mr-3" />
+                <div>
+                  <div className="font-medium text-gray-900">System Settings</div>
+                  <div className="text-sm text-gray-500">Configure platform settings</div>
+                </div>
+              </div>
+              <ArrowRight className="w-5 h-5 text-blue-600" />
+            </button>
+
+            <button className="w-full flex items-center justify-between p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors text-left">
+              <div className="flex items-center">
+                <Users className="w-5 h-5 text-green-600 mr-3" />
+                <div>
+                  <div className="font-medium text-gray-900">User Management</div>
+                  <div className="text-sm text-gray-500">Manage all system users</div>
+                </div>
+              </div>
+              <ArrowRight className="w-5 h-5 text-green-600" />
+            </button>
+
+            <button 
+              onClick={() => setShowCreateEvent(true)}
+              className="w-full flex items-center justify-between p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors text-left"
+            >
+              <div className="flex items-center">
+                <Calendar className="w-5 h-5 text-purple-600 mr-3" />
+                <div>
+                  <div className="font-medium text-gray-900">Create Event</div>
+                  <div className="text-sm text-gray-500">Host institution-wide events</div>
+                </div>
+              </div>
+              <ArrowRight className="w-5 h-5 text-purple-600" />
+            </button>
+
+            <button className="w-full flex items-center justify-between p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors text-left">
+              <div className="flex items-center">
+                <BarChart3 className="w-5 h-5 text-orange-600 mr-3" />
+                <div>
+                  <div className="font-medium text-gray-900">Analytics Dashboard</div>
+                  <div className="text-sm text-gray-500">View detailed reports</div>
+                </div>
+              </div>
+              <ArrowRight className="w-5 h-5 text-orange-600" />
+            </button>
+          </div>
+        </div>
+
         {/* Recent Activity */}
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Recent Activity</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Recent System Activity</h2>
             <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
               View All
             </button>
           </div>
 
           <div className="space-y-4">
-            {recentActivities.map((activity) => (
-              <div key={activity.id} className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                <div className={`p-2 rounded-lg bg-gray-100`}>
-                  <activity.icon className={`w-4 h-4 ${activity.color}`} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium text-gray-900 text-sm">{activity.title}</div>
-                  <div className="text-gray-600 text-sm mt-1">{activity.description}</div>
-                  <div className="text-gray-500 text-xs mt-1">{activity.time}</div>
-                </div>
+            <div className="flex items-center space-x-4 p-3 bg-blue-50 rounded-lg">
+              <div className="bg-blue-600 text-white p-2 rounded-lg">
+                <BookOpen className="w-4 h-4" />
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Platform Growth */}
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Platform Growth</h2>
-          
-          <div className="space-y-6">
-            <div className="text-center p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
-              <div className="text-3xl font-bold text-gray-900 mb-2">2,847</div>
-              <div className="text-gray-600">Total Active Users</div>
-              <div className="flex items-center justify-center mt-2">
-                <ArrowUp className="w-4 h-4 text-green-600 mr-1" />
-                <span className="text-green-600 font-medium">+15.3% this month</span>
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-gray-900 text-sm">New project created</div>
+                <div className="text-xs text-gray-500">Computer Science Department</div>
               </div>
+              <span className="text-xs text-gray-500">2 hrs ago</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">{applications.length}</div>
-                <div className="text-gray-600 text-sm">Applications</div>
+            <div className="flex items-center space-x-4 p-3 bg-green-50 rounded-lg">
+              <div className="bg-green-600 text-white p-2 rounded-lg">
+                <Users className="w-4 h-4" />
               </div>
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">{events.length}</div>
-                <div className="text-gray-600 text-sm">Events</div>
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-gray-900 text-sm">New faculty registration</div>
+                <div className="text-xs text-gray-500">Mathematics Department</div>
               </div>
+              <span className="text-xs text-gray-500">5 hrs ago</span>
             </div>
 
-            <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-orange-900">Innovation Index</span>
-                <span className="font-bold text-orange-600">8.7/10</span>
+            <div className="flex items-center space-x-4 p-3 bg-purple-50 rounded-lg">
+              <div className="bg-purple-600 text-white p-2 rounded-lg">
+                <Calendar className="w-4 h-4" />
               </div>
-              <div className="mt-2 w-full bg-orange-200 rounded-full h-2">
-                <div className="bg-orange-500 h-2 rounded-full" style={{ width: '87%' }}></div>
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-gray-900 text-sm">Event published</div>
+                <div className="text-xs text-gray-500">AI Workshop Series</div>
               </div>
+              <span className="text-xs text-gray-500">1 day ago</span>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Create Event Modal */}
+      {showCreateEvent && (
+        <CreateEvent 
+          onClose={() => setShowCreateEvent(false)}
+          onSuccess={() => {
+            setShowCreateEvent(false);
+            // Event created successfully
+          }}
+        />
+      )}
     </div>
   );
 }

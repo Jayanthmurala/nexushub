@@ -13,7 +13,10 @@ import {
   CheckCircle,
   ArrowRight,
   Filter,
-  Search
+  Search,
+  FileCheck,
+  UserCheck,
+  BarChart3
 } from 'lucide-react';
 import CreateEvent from '../Faculty/CreateEvent';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -167,21 +170,19 @@ export default function DeptAdminDashboard() {
               <ArrowRight className="w-5 h-5 text-orange-600" />
             </button>
 
-            {user?.role === 'FACULTY' || user?.role === 'ADMIN' ? (
-              <button
-                onClick={() => setShowCreateEvent(true)}
-                className="w-full flex items-center justify-between p-4 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-colors text-left"
-              >
-                <div className="flex items-center">
-                  <Plus className="w-5 h-5 text-cyan-600 mr-3" />
-                  <div>
-                    <div className="font-medium text-gray-900">Create New Event</div>
-                    <div className="text-sm text-gray-500">Add a new event for students</div>
-                  </div>
+            <button
+              onClick={() => setShowCreateEvent(true)}
+              className="w-full flex items-center justify-between p-4 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-colors text-left"
+            >
+              <div className="flex items-center">
+                <Calendar className="w-5 h-5 text-cyan-600 mr-3" />
+                <div>
+                  <div className="font-medium text-gray-900">Create New Event</div>
+                  <div className="text-sm text-gray-500">Add a new event for students</div>
                 </div>
-                <ArrowRight className="w-5 h-5 text-cyan-600" />
-              </button>
-            ) : null}
+              </div>
+              <ArrowRight className="w-5 h-5 text-cyan-600" />
+            </button>
           </div>
         </div>
 
@@ -324,7 +325,13 @@ export default function DeptAdminDashboard() {
         </div>
       </div>
       {showCreateEvent && (
-        <CreateEvent onClose={() => setShowCreateEvent(false)} />
+        <CreateEvent 
+          onClose={() => setShowCreateEvent(false)}
+          onSuccess={() => {
+            setShowCreateEvent(false);
+            // Event created successfully
+          }}
+        />
       )}
     </div>
   );
