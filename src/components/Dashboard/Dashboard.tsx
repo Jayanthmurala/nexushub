@@ -32,7 +32,8 @@ export type ActiveView =
   | 'feed'
   | 'badges'
   | 'analytics'
-  | 'admin-management';
+  | 'admin-management'
+  | 'student-database';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -81,6 +82,8 @@ export default function Dashboard() {
         return <HeadAdminDashboard />;
       case 'admin-management':
         return <div className="p-6"><h1 className="text-2xl font-bold">Admin Management</h1><p className="text-gray-600 mt-2">Manage system administrators and permissions.</p></div>;
+      case 'student-database':
+        return <PlacementsAdminDashboard />;
       default:
         return <div>View not found</div>;
     }

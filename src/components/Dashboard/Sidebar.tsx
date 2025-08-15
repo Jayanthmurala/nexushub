@@ -78,7 +78,7 @@ export default function Sidebar({ activeView, setActiveView, isSidebarOpen, setI
       case 'placements_admin':
         return [
           ...baseItems.slice(0, 1),
-          { id: 'applications' as ActiveView, label: 'Student Database', icon: Users },
+          { id: 'student-database' as ActiveView, label: 'Student Database', icon: Users },
           { id: 'events' as ActiveView, label: 'Events', icon: Calendar },
           ...baseItems.slice(1)
         ];
