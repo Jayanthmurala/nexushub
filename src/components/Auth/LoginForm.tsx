@@ -26,7 +26,6 @@ export default function LoginForm() {
       setLoading(false);
     }
   };
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (

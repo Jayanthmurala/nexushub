@@ -74,7 +74,7 @@ export interface EventRegistration {
   registeredAt: Date;
 }
 
-interface DataContextType {
+ export interface DataContextType {
   projects: Project[];
   applications: Application[];
   events: Event[];

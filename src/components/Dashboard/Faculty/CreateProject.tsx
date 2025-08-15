@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Save, X, Plus, Minus, Calendar, Users, Clock, BookOpen } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useData } from '../../../contexts/DataContext';
@@ -7,7 +7,7 @@ interface CreateProjectProps {
   onComplete: () => void;
 }
 
-export default function CreateProject({ onComplete }: CreateProjectProps) {
+const CreateProject = memo(({ onComplete }: CreateProjectProps) => {
   const { user } = useAuth();
   const { addProject } = useData();
 
@@ -29,12 +29,13 @@ export default function CreateProject({ onComplete }: CreateProjectProps) {
 
   const departments = [
     'Computer Science', 'Electronics', 'Mechanical', 'Civil', 
-    'Electrical', 'Chemical', 'Biotechnology', 'Mathematics', 'Physics', 'Chemistry'
+    'Electrical', 'Chemical', 'Biotechnology', 'Mathematics', 'Physics', 'Chemistry', 'All Departments'
+
   ];
 
   const durationOptions = [
-    '1 month', '2 months', '3 months', '4 months', '5 months', '6 months',
-    '1 semester', '2 semesters', '1 year', 'Flexible'
+   'Flexible', '1 month', '2 months', '3 months', '4 months', '5 months', '6 months',
+    '1 semester', '2 semesters', '1 year'
   ];
 
   const commonSkills = [
@@ -59,7 +60,7 @@ export default function CreateProject({ onComplete }: CreateProjectProps) {
   const handleArrayChange = (field: string, index: number, value: string) => {
     setFormData(prev => ({
       ...prev,
-      [field]: prev[field as keyof typeof prev].map((item: string, i: number) => 
+      [field]: (prev[field as keyof typeof prev] as string[]).map((item: string, i: number) =>
         i === index ? value : item
       )
     }));
@@ -68,14 +69,14 @@ export default function CreateProject({ onComplete }: CreateProjectProps) {
   const addArrayItem = (field: string) => {
     setFormData(prev => ({
       ...prev,
-      [field]: [...prev[field as keyof typeof prev], '']
+      [field]: [...(prev[field as keyof typeof prev] as string[]), '']
     }));
   };
 
   const removeArrayItem = (field: string, index: number) => {
     setFormData(prev => ({
       ...prev,
-      [field]: prev[field as keyof typeof prev].filter((_: any, i: number) => i !== index)
+      [field]: (prev[field as keyof typeof prev] as string[]).filter((_: string, i: number) => i !== index)
     }));
   };
 
@@ -303,14 +304,6 @@ export default function CreateProject({ onComplete }: CreateProjectProps) {
                 {errors.duration && <p className="text-red-600 text-sm mt-1">{errors.duration}</p>}
               </div>
             </div>
-          </div>
-
-          {/* Project Details */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-              <Users className="w-5 h-5 mr-2" />
-              Project Details
-            </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -342,75 +335,91 @@ export default function CreateProject({ onComplete }: CreateProjectProps) {
                   type="date"
                   value={formData.deadline}
                   onChange={handleInputChange}
-                  min={new Date().toISOString().split('T')[0]}
                   className="w-full py-3 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
-
-            <ArrayInput
-              label="Required Skills *"
-              field="skills"
-              placeholder="e.g., React, Python, Machine Learning"
-              suggestions={commonSkills}
-            />
-
-            <ArrayInput
-              label="Project Tags"
-              field="tags"
-              placeholder="e.g., AI, Research, Innovation"
-            />
           </div>
 
-          {/* Requirements and Outcomes */}
+          {/* Skills */}
           <div className="space-y-4">
             <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-              <Clock className="w-5 h-5 mr-2" />
-              Requirements & Outcomes
+              <Users className="w-5 h-5 mr-2" />
+              Required Skills
             </h2>
-
             <ArrayInput
-              label="Requirements *"
+              label="Skills"
+              field="skills"
+              placeholder="Enter required skill"
+              suggestions={commonSkills}
+            />
+          </div>
+
+          {/* Requirements */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+              <BookOpen className="w-5 h-5 mr-2" />
+              Project Requirements
+            </h2>
+            <ArrayInput
+              label="Requirements"
               field="requirements"
-              placeholder="e.g., Strong Python programming skills"
+              placeholder="Enter project requirement"
             />
+          </div>
 
+          {/* Expected Outcomes */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+              <Save className="w-5 h-5 mr-2" />
+              Expected Outcomes
+            </h2>
             <ArrayInput
-              label="Expected Outcomes *"
+              label="Outcomes"
               field="outcomes"
-              placeholder="e.g., Research paper publication"
+              placeholder="Enter expected outcome"
             />
           </div>
-        </div>
 
-        {/* Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg flex items-center justify-between">
-          <div className="text-sm text-gray-500">
-            * Required fields
+          {/* Tags */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+              <Plus className="w-5 h-5 mr-2" />
+              Tags
+            </h2>
+            <ArrayInput
+              label="Tags"
+              field="tags"
+              placeholder="Enter relevant tag"
+            />
           </div>
-          <div className="flex space-x-3">
-            <button
-              type="button"
-              onClick={onComplete}
-              className="px-4 py-2 text-gray-700 hover:text-gray-900 font-medium transition-colors"
-            >
-              Cancel
-            </button>
+
+          {/* Submit Button */}
+          <div className="flex justify-end pt-6 border-t border-gray-200">
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center"
             >
               {loading ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Creating Project...
+                </>
               ) : (
-                <Save className="w-4 h-4 mr-2" />
+                <>
+                  <Save className="w-5 h-5 mr-2" />
+                  Create Project
+                </>
               )}
-              Create Project
             </button>
           </div>
         </div>
       </form>
     </div>
   );
-}
+});
+
+CreateProject.displayName = 'CreateProject';
+
+export default CreateProject;

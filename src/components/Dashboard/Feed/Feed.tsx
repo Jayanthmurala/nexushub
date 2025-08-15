@@ -10,7 +10,7 @@ import {
   FileText,
   Link as LinkIcon,
   Award,
-  TrendingUp,
+  // TrendingUp,
   Clock,
   Users,
   ChevronDown,
@@ -58,7 +58,7 @@ export default function Feed() {
   const { badges, studentBadges } = useData();
   const [posts, setPosts] = useState<Post[]>([]);
   const [showCreatePost, setShowCreatePost] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'following' | 'trending' | 'badges'>('all');
+  const [filter, setFilter] = useState<'all' | 'following'  | 'badges'>('all'); //| 'trending'
 
   // Generate badge award posts from studentBadges
   React.useEffect(() => {
@@ -175,8 +175,8 @@ export default function Feed() {
     switch (filter) {
       case 'badges':
         return post.type === 'badge_award';
-      case 'trending':
-        return post.likes > 15;
+      // case 'trending':
+      //   return post.likes > 15;
       default:
         return true;
     }
@@ -203,7 +203,7 @@ export default function Feed() {
               >
                 All
               </button>
-              <button
+              {/* <button
                 onClick={() => setFilter('trending')}
                 className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                   filter === 'trending' 
@@ -213,7 +213,7 @@ export default function Feed() {
               >
                 <TrendingUp className="w-4 h-4 mr-1 inline" />
                 Trending
-              </button>
+              </button> */}
               <button
                 onClick={() => setFilter('badges')}
                 className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${

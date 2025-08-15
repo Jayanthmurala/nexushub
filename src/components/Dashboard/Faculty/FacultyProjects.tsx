@@ -10,10 +10,12 @@ import {
   BookOpen,
   Filter,
   Search,
-  MoreVertical
+  MoreVertical,
+  X
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useData } from '../../../contexts/DataContext';
+import CreateProject from './CreateProject';
 
 export default function FacultyProjects() {
   const { user } = useAuth();
@@ -21,6 +23,7 @@ export default function FacultyProjects() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showDropdown, setShowDropdown] = useState<string | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const myProjects = projects.filter(p => p.facultyId === user?.id);
   const filteredProjects = myProjects.filter(project => {
@@ -212,7 +215,10 @@ export default function FacultyProjects() {
           <h1 className="text-3xl font-bold text-gray-900">My Projects</h1>
           <p className="text-gray-600 mt-1">Manage your research projects and collaborations</p>
         </div>
-        <button className="mt-4 sm:mt-0 flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="mt-4 sm:mt-0 flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+        >
           <Plus className="w-5 h-5 mr-2" />
           Create New Project
         </button>
@@ -279,7 +285,10 @@ export default function FacultyProjects() {
               <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No projects yet</h3>
               <p className="text-gray-600 mb-6">Create your first research project to start collaborating with students</p>
-              <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center mx-auto">
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center mx-auto"
+              >
                 <Plus className="w-5 h-5 mr-2" />
                 Create Your First Project
               </button>
@@ -291,6 +300,38 @@ export default function FacultyProjects() {
               <p className="text-gray-600">Try adjusting your search criteria or filters</p>
             </>
           )}
+        </div>
+      )}
+
+      {/* Create Project Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto" key="create-project-modal">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div
+              className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
+              onClick={() => setShowCreateModal(false)}
+            />
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+              &#8203;
+            </span>
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+              <div className="bg-white">
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                  <h3 className="text-2xl font-bold text-gray-900">Create New Project</h3>
+                  <button
+                    onClick={() => setShowCreateModal(false)}
+                    className="text-gray-400 hover:text-gray-500 transition-colors"
+                  >
+                    <span className="sr-only">Close</span>
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                <div className="p-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+                  <CreateProject onComplete={() => setShowCreateModal(false)} />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
