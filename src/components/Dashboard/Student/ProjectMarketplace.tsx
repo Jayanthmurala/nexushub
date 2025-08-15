@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useData } from '../../../contexts/DataContext';
 import { useAuth } from '../../../contexts/AuthContext';
+import ApplicationModal from './ApplicationModal';
 
 export default function ProjectMarketplace() {
   const { projects, applyToProject } = useData();
@@ -23,6 +24,8 @@ export default function ProjectMarketplace() {
   const [selectedSkill, setSelectedSkill] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [applicationModalOpen, setApplicationModalOpen] = useState(false);
+  const [selectedProjectForApplication, setSelectedProjectForApplication] = useState<any>(null);
 
   const departments = ['all', ...new Set(projects.map(p => p.department))];
   const allSkills = ['all', ...new Set(projects.flatMap(p => p.skills))];
@@ -39,9 +42,15 @@ export default function ProjectMarketplace() {
     return matchesSearch && matchesDepartment && matchesSkill && isOpen;
   });
 
-  const handleApply = (projectId: string) => {
+  const handleApply = (project: any) => {
+    setSelectedProjectForApplication(project);
+    setApplicationModalOpen(true);
+  };
+
+  const handleApplicationSubmit = (projectId: string, motivation: string, skills: string) => {
     if (user) {
-      applyToProject(projectId, user.id, "I'm interested in contributing to this project and believe my skills align well with the requirements.");
+      const applicationMessage = `Motivation: ${motivation}\n\nSkills & Experience: ${skills}`;
+      applyToProject(projectId, user.id, applicationMessage);
       alert('Application submitted successfully!');
     }
   };
@@ -132,7 +141,7 @@ export default function ProjectMarketplace() {
             {selectedProject === project.id ? 'Less Info' : 'More Info'}
           </button>
           <button
-            onClick={() => handleApply(project.id)}
+            onClick={() => handleApply(project)}
             className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-lg transition-colors"
           >
             Apply Now
@@ -262,6 +271,19 @@ export default function ProjectMarketplace() {
           <h3 className="text-lg font-medium text-gray-900 mb-2">No projects found</h3>
           <p className="text-gray-600">Try adjusting your search criteria or filters</p>
         </div>
+      )}
+
+      {/* Application Modal */}
+      {applicationModalOpen && selectedProjectForApplication && (
+        <ApplicationModal
+          project={selectedProjectForApplication}
+          isOpen={applicationModalOpen}
+          onClose={() => {
+            setApplicationModalOpen(false);
+            setSelectedProjectForApplication(null);
+          }}
+          onSubmit={handleApplicationSubmit}
+        />
       )}
     </div>
   );
