@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useData } from '../../../contexts/DataContext';
-import CreateEvent from './CreateEvent'; // Assuming CreateEvent component is in the same directory
+import CreateEvent from '../Faculty/CreateEvent';
 
 export default function HeadAdminDashboard() {
   const { user } = useAuth();
