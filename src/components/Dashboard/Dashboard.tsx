@@ -15,7 +15,7 @@ import CreateProject from './Faculty/CreateProject';
 import CollaborationHub from './Faculty/CollaborationHub';
 import Profile from './Profile';
 // Assuming Feed, CreatePost, and PostCard components are in './Feed'
-import Feed from './Feed'; 
+import Feed from './Feed/Feed'; 
 
 export type ActiveView = 
   | 'dashboard' 

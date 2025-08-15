@@ -14,7 +14,8 @@ import {
   BarChart3,
   Shield,
   User,
-  Rss
+  Rss,
+  Menu
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { ActiveView } from './Dashboard';
